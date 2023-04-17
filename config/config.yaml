@@ -1,0 +1,15 @@
+bot:
+  website: https://www.example.com
+  token: 5856609274:AAFn7XeOaaGuKc-VmYQo3ywPQ5X2eF9esNk
+  admin_id: 
+   - 5611253292
+   - 5868721737
+  group_id: -885377620
+apps:
+  database:
+    ip: localhost
+    port: 3306
+    user: v2board
+    pass: v2board
+    name: v2board
+  
