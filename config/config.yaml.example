@@ -1,0 +1,15 @@
+bot:
+  website: https://www.example.com
+  token: telegram:bot:token
+  admin_id: 
+   - 0000000000
+   - 0000000000
+  group_id: -0000000000
+apps:
+  database:
+    ip: localhost
+    port: 3306
+    user: v2board
+    pass: v2board
+    name: v2board
+  
