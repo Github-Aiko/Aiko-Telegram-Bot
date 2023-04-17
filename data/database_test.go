@@ -12,7 +12,7 @@ func TestNew(t *testing.T) {
 			Database: config.Database{
 				User: "123",
 				Pass: "CnEEyfKF6fTtP6tD",
-				IP:   "1.117.223.151",
+				IP:   "127.0.0.1",
 				Port: 3306,
 				Name: "123",
 			},
