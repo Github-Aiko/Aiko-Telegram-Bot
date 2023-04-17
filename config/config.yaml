@@ -7,9 +7,9 @@ bot:
   group_id: -885377620
 apps:
   database:
-    ip: localhost
+    ip: 209.141.61.136
     port: 3306
-    user: v2board
-    pass: v2board
-    name: v2board
+    user: aiko-tg-bot	
+    pass: 8iMCrKrGDmaGWdAd
+    name: aiko-tg-bot	
   
