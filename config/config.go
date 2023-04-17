@@ -1,45 +1,45 @@
 package config
 
-import "github.com/spf13/viper"
+import (
+	"flag"
+	"log"
+	"os"
+	"path"
+	"strings"
 
-type Config struct {
-	Bot  `yaml:"bot"`
-	APPs `yaml:"apps"`
-}
+	"github.com/spf13/viper"
+)
 
-type Bot struct {
-	Website  string `yaml:"website"`
-	Token    string `yaml:"token"`
-	AdminIDs []int  `yaml:"admin_id"`
-	GroupID  int    `yaml:"group_id"`
-}
+var (
+	configFile = flag.String("config", "", "Config file for Aiko Bot Telegram.")
+)
 
-type APPs struct {
-	Database `yaml:"database"`
-}
+func GetConfig() *viper.Viper {
+	config := viper.New()
 
-type Database struct {
-	IP   string `yaml:"ip"`
-	Port int    `yaml:"port"`
-	User string `yaml:"user"`
-	Pass string `yaml:"pass"`
-	Name string `yaml:"name"`
-}
-
-func New() *Config {
-
-	viper.SetConfigName("config")
-	viper.AddConfigPath("./config")
-	viper.SetConfigType("yaml")
-	if err := viper.ReadInConfig(); err != nil {
-		panic(err)
-	}
-	cfg := new(Config)
-	err := viper.Unmarshal(cfg)
-	if err != nil {
-		panic(err)
+	// Set custom path and name
+	if *configFile != "" {
+		configName := path.Base(*configFile)
+		configFileExt := path.Ext(*configFile)
+		configNameOnly := strings.TrimSuffix(configName, configFileExt)
+		configPath := path.Dir(*configFile)
+		config.SetConfigName(configNameOnly)
+		config.SetConfigType(strings.TrimPrefix(configFileExt, "."))
+		config.AddConfigPath(configPath)
+		// Set ASSET Path and Config Path
+		os.Setenv("ASSET_PATH", configPath)
+		os.Setenv("CONFIG_PATH", configPath)
+	} else {
+		// Set default config path
+		config.SetConfigName("config")
+		config.SetConfigType("yaml")
+		config.AddConfigPath(".")
 	}
 
-	return cfg
+	if err := config.ReadInConfig(); err != nil {
+		log.Panicf("Fatal error config file: %s \n", err)
+	}
 
+	config.WatchConfig()
+	return config
 }

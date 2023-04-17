@@ -22,7 +22,7 @@ func New(cfg *config.Config) *gorm.DB {
 
 	db, err := gorm.Open(mysql.Open(dsn), &gorm.Config{})
 	if err != nil {
-		log.Panicf("数据库连接失败请检查数据库配置文件：%s", err)
+		log.Panicf("The database connection failed. Please check the database configuration file: %s", err)
 		panic(err)
 	}
 
@@ -32,13 +32,13 @@ func New(cfg *config.Config) *gorm.DB {
 
 }
 
-// 设置数据库链接池
+// Set up a database connection pool
 func setDatabaseConnectionPool(db *gorm.DB) {
 	sqlDB, _ := db.DB()
-	// 连接池中的最大连接数。
+	// The maximum number of connections in the connection pool.
 	sqlDB.SetMaxIdleConns(10)
-	// 数据库的最大连接数
+	// The maximum number of connections to the database
 	sqlDB.SetMaxOpenConns(100)
-	// 设置连接可重用的最大时间
-	sqlDB.SetConnMaxLifetime(10 * time.Second) //10秒
+	// Set the maximum time a connection can be reused
+	sqlDB.SetConnMaxLifetime(10 * time.Second) //10 seconds
 }

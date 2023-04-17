@@ -20,9 +20,9 @@ func TestNew(t *testing.T) {
 	}
 	db := New(cfg)
 	if db == nil {
-		t.Errorf("连接失败")
+		t.Errorf("Connection failed")
 	}
 
-	t.Log("连接成功")
+	t.Log("Connection succeeded")
 
 }
