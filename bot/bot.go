@@ -13,20 +13,35 @@ type Bot struct {
 	Client *http.Client
 }
 
-func New(token, proxy string) *Bot {
+func New(token, proxy string) (*Bot, error) {
 
-	proxyUrl, _ := url.Parse(proxy)
+	if proxy == "" {
+		return &Bot{
+			Token: token,
+			Client: &http.Client{
+				Timeout: 30 * time.Second,
+			},
+		}, nil
+	}
 
-	return &Bot{
+	proxyUrl, err := url.Parse(proxy)
+	if err != nil {
+		return nil, err
+	}
+
+	transport := &http.Transport{
+		Proxy: http.ProxyURL(proxyUrl),
+	}
+
+	bot := &Bot{
 		Token: token,
 		Client: &http.Client{
-			Transport: &http.Transport{
-				Proxy: http.ProxyURL(proxyUrl),
-			},
-			Timeout: 30 * time.Second,
+			Transport: transport,
+			Timeout:   30 * time.Second,
 		},
 	}
 
+	return bot, nil
 }
 
 func (b *Bot) SendMessage(chatID, text string) error {
