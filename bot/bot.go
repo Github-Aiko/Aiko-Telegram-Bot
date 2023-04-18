@@ -8,55 +8,37 @@ import (
 	"time"
 )
 
-type Bot struct {
-	Token  string
-	Client *http.Client
-}
-
 func New(token, proxy string) (*Bot, error) {
+	client := &http.Client{Timeout: 30 * time.Second}
 
-	if proxy == "" {
-		return &Bot{
-			Token: token,
-			Client: &http.Client{
-				Timeout: 30 * time.Second,
-			},
-		}, nil
+	if proxy != "" {
+		proxyURL, err := url.Parse(proxy)
+		if err != nil {
+			return nil, err
+		}
+		transport := &http.Transport{Proxy: http.ProxyURL(proxyURL)}
+		client.Transport = transport
 	}
 
-	proxyUrl, err := url.Parse(proxy)
-	if err != nil {
-		return nil, err
-	}
-
-	transport := &http.Transport{
-		Proxy: http.ProxyURL(proxyUrl),
-	}
-
-	bot := &Bot{
-		Token: token,
-		Client: &http.Client{
-			Transport: transport,
-			Timeout:   30 * time.Second,
-		},
-	}
-
-	return bot, nil
+	return &Bot{Token: token, Client: client}, nil
 }
 
 func (b *Bot) SendMessage(chatID, text string) error {
+	apiURL := fmt.Sprintf("https://api.telegram.org/bot%s/sendMessage", b.Token)
 
-	url := fmt.Sprintf("https://api.telegram.org/bot%s/sendMessage?chat_id=%s&text=%s", b.Token, chatID, text)
+	values := url.Values{}
+	values.Set("chat_id", chatID)
+	values.Set("text", text)
 
-	resp, err := b.Client.Get(url)
+	resp, err := b.Client.Get(apiURL + "?" + values.Encode())
 	if err != nil {
 		return err
 	}
+	defer resp.Body.Close()
 
 	if resp.StatusCode != 200 {
 		return errors.New("failed to send message")
 	}
 
 	return nil
-
 }
