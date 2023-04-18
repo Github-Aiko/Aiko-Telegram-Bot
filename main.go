@@ -9,6 +9,8 @@ import (
 func main() {
 	// chatID := int64(123456789)
 	// sendMessage(chatID, "Hello, world!")
+
 	config := config.GetConfig()
-	fmt.Printf("Bot Telegram Token:%s", config.GetString("APPs.Telegram.Token"))
+
+	fmt.Printf("Bot Telegram Token:%s", config.GetString("bot.token"))
 }
