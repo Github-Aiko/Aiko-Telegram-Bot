@@ -1,44 +1,68 @@
 package data
 
 import (
+	"database/sql"
 	"fmt"
-	"log"
-	"time"
+	"io/ioutil"
 
 	"github.com/Github-Aiko/Aiko-Telegram-Bot/config"
-	"gorm.io/driver/mysql"
-	"gorm.io/gorm"
+	_ "github.com/go-sql-driver/mysql"
+	"gopkg.in/yaml.v3"
 )
 
-func New(cfg *config.Config) *gorm.DB {
-
-	dsn := fmt.Sprintf("%s:%s@tcp(%s:%v)/%s?charset=utf8mb4&parseTime=True&loc=Local",
-		cfg.APPs.Database.User,
-		cfg.APPs.Database.Pass,
-		cfg.APPs.Database.IP,
-		cfg.APPs.Database.Port,
-		cfg.APPs.Database.Name,
-	)
-
-	db, err := gorm.Open(mysql.Open(dsn), &gorm.Config{})
+func New() {
+	// Read the config file
+	data, err := ioutil.ReadFile(config.GetConfig().GetString("Apps.database.config"))
 	if err != nil {
-		log.Panicf("The database connection failed. Please check the database configuration file: %s", err)
 		panic(err)
 	}
 
-	setDatabaseConnectionPool(db)
+	// Decode the YAML data into a Config struct
+	var config config.Config
+	err = yaml.Unmarshal(data, &config)
+	if err != nil {
+		panic(err)
+	}
 
-	return db
+	// Create a database connection
+	db, err := sql.Open("mysql", fmt.Sprintf("%s:%s@tcp(%s:%d)/%s",
+		config.Apps.Database.User, config.Apps.Database.Pass,
+		config.Apps.Database.IP, config.Apps.Database.Port,
+		config.Apps.Database.Name))
+	if err != nil {
+		panic(err)
+	}
+	defer db.Close()
 
-}
+	// Test the connection
+	err = db.Ping()
+	if err != nil {
+		panic(err)
+	}
 
-// Set up a database connection pool
-func setDatabaseConnectionPool(db *gorm.DB) {
-	sqlDB, _ := db.DB()
-	// The maximum number of connections in the connection pool.
-	sqlDB.SetMaxIdleConns(10)
-	// The maximum number of connections to the database
-	sqlDB.SetMaxOpenConns(100)
-	// Set the maximum time a connection can be reused
-	sqlDB.SetConnMaxLifetime(10 * time.Second) //10 seconds
+	// Perform a test query
+	rows, err := db.Query("SELECT * FROM table_name")
+	if err != nil {
+		panic(err)
+	}
+	defer rows.Close()
+
+	// Iterate over the query results
+	for rows.Next() {
+		var column1 string
+		var column2 int
+		err = rows.Scan(&column1, &column2)
+		if err != nil {
+			panic(err)
+		}
+		fmt.Printf("Column 1: %s, Column 2: %d\n", column1, column2)
+	}
+	err = rows.Err()
+	if err != nil {
+		panic(err)
+	}
+
+	// Output a success message
+	fmt.Println("Database connection test successful!")
+
 }
