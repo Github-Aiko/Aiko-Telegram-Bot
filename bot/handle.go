@@ -10,10 +10,10 @@ func NewBotHandle(s *BotService) *BotHandle {
 	return &BotHandle{s: s}
 }
 
-func (s *BotService) SetHandle(b *Bot) {
+func (h *BotHandle) SetHandle(b *Bot) {
 	b.Use(middleware.Logger())
-	b.Handle("/start", s.startCmd)
-	b.Handle("/ping", s.pingCmd)
-	b.Handle("/login", s.loginCmd)
-	b.Handle("/reg", s.registerCmd)
+	b.Handle("/start", h.s.startCmd)
+	b.Handle("/ping", h.s.pingCmd)
+	b.Handle("/login", h.s.loginCmd)
+	b.Handle("/reg", h.s.registerCmd)
 }

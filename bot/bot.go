@@ -29,9 +29,13 @@ func New(token string) (*Bot, error) {
 
 func StartBot(b *Bot, db *gorm.DB) {
 
-	service := &BotService{u: data.NewUserRepo(db)}
+	ur := data.NewUserRepo(db)
 
-	NewBotHandle(service)
+	service := NewBotService(ur)
+
+	handle := NewBotHandle(service)
+
+	handle.SetHandle(b)
 
 	b.Start()
 }

@@ -10,6 +10,10 @@ type BotService struct {
 	u *data.UserRepo
 }
 
+func NewBotService(u *data.UserRepo) *BotService {
+	return &BotService{u: u}
+}
+
 // StartCmd 启动函数
 // StartCmd start function
 func (s *BotService) startCmd(c tele.Context) error {
@@ -64,7 +68,7 @@ func (s *BotService) loginCmd(c tele.Context) error {
 func (s *BotService) registerCmd(c tele.Context) error {
 	args := c.Args()
 	if len(args) != 2 {
-		return c.Reply("Usage: /login username password\n 使用方法: /login 用户名 密码")
+		return c.Reply("Usage: /reg username password\n 使用方法: /reg 用户名 密码")
 	}
 
 	username := args[0]
