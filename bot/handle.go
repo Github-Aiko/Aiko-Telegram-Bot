@@ -1,5 +1,6 @@
 package bot
 
 func setHandler(b *Bot) {
-	b.Handle("/ping", ping)
+	b.Handle("/start", startCmd)
+	b.Handle("/ping", pingCmd)
 }
