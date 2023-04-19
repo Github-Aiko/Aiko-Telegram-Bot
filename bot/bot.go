@@ -8,17 +8,8 @@ import (
 	"time"
 )
 
-func New(token, proxy string) (*Bot, error) {
+func New(token string) (*Bot, error) {
 	client := &http.Client{Timeout: 30 * time.Second}
-
-	if proxy != "" {
-		proxyURL, err := url.Parse(proxy)
-		if err != nil {
-			return nil, err
-		}
-		transport := &http.Transport{Proxy: http.ProxyURL(proxyURL)}
-		client.Transport = transport
-	}
 
 	return &Bot{Token: token, Client: client}, nil
 }
