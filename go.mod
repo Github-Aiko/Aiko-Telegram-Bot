@@ -5,6 +5,7 @@ go 1.20
 require (
 	github.com/go-sql-driver/mysql v1.7.0
 	github.com/spf13/viper v1.15.0
+	gopkg.in/telebot.v3 v3.1.3
 	gopkg.in/yaml.v3 v3.0.1
 
 )

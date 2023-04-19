@@ -6,12 +6,12 @@ import (
 )
 
 func main() {
-	// chatID := int64(123456789)
-	// sendMessage(chatID, "Hello, world!")
 
-	config := config.GetConfig()
+	tgbot, err := bot.New(config.GetConfig().GetString("bot.token"))
+	if err != nil {
+		panic(err)
+	}
 
-	bot := bot.New(config.GetString("bot.token"))
-	bot.SendMessage("-1001658662143", "Aiko 7")
+	bot.Start(tgbot)
 
 }
