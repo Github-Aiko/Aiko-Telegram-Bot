@@ -1,8 +1,7 @@
 package main
 
 import (
-	"fmt"
-
+	"github.com/Github-Aiko/Aiko-Telegram-Bot/bot"
 	"github.com/Github-Aiko/Aiko-Telegram-Bot/config"
 )
 
@@ -12,5 +11,7 @@ func main() {
 
 	config := config.GetConfig()
 
-	fmt.Printf("Bot Telegram Token:%s", config.GetString("bot.token"))
+	bot := bot.New(config.GetString("bot.token"))
+	bot.SendMessage("-1001658662143", "Aiko 7")
+
 }
