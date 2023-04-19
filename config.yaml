@@ -12,4 +12,4 @@ apps:
     user: aiko-tg-bot	
     pass: 8iMCrKrGDmaGWdAd
     name: aiko-tg-bot	
-  proxy: http://amiss:921920@54.175.181.68:12345
+  # proxy: http://amiss:921920@54.175.181.68:12345

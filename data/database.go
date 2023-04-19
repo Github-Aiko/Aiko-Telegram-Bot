@@ -12,7 +12,7 @@ import (
 
 func New() {
 	// Read the config file
-	data, err := ioutil.ReadFile(config.GetConfig().GetString("Apps.database.config"))
+	data, err := ioutil.ReadFile(config.GetConfig().GetString("apps.database.config"))
 	if err != nil {
 		panic(err)
 	}
