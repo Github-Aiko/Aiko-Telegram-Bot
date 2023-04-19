@@ -43,12 +43,11 @@ func (s *BotService) pingCmd(c tele.Context) error {
 	return c.Send("pong!")
 }
 
-// LoginCmd 登录函数
-// LoginCmd login function
+// LoginCmd function
 func (s *BotService) loginCmd(c tele.Context) error {
 	args := c.Args()
 	if len(args) != 2 {
-		return c.Reply("Usage: /login username password\n 使用方法: /login 用户名 密码")
+		return c.Reply("Usage: /login username password\n Usage: /login <username> <password>")
 	}
 
 	username := args[0]
@@ -57,14 +56,13 @@ func (s *BotService) loginCmd(c tele.Context) error {
 
 	u, err := s.u.Login(username, passwordMD5)
 	if err != nil {
-		return c.Reply("Login failed\n 登录失败")
+		return c.Reply("Login failed: " + err.Error() + "\n Login failed")
 	}
 
-	return c.Reply("Login success\n 登入成功" + u.Token)
+	return c.Reply("Login success\n Logged in successfully: " + u.Token)
 }
 
-// RegisterCmd 注册函数
-// RegisterCmd register function
+// RegisterCmd function
 func (s *BotService) registerCmd(c tele.Context) error {
 	args := c.Args()
 	if len(args) != 2 {
@@ -73,16 +71,16 @@ func (s *BotService) registerCmd(c tele.Context) error {
 
 	username := args[0]
 
-	//校验用户名是否不小于6位
+	// validate that the username is at least 6 characters long
 	if len(username) < 6 {
-		return c.Reply("Username must be greater than 6 characters\n 用户名必须大于6位")
+		return c.Reply("Username must be greater than 6 characters\n Username must be at least 6 characters long")
 	}
 
 	password := args[1]
 
-	//校验密码是否不小于6位
+	// validate that the password is at least 6 characters long
 	if len(password) < 6 {
-		return c.Reply("Password must be greater than 6 characters\n 密码必须大于6位")
+		return c.Reply("Password must be greater than 6 characters\n Password must be at least 6 characters long")
 	}
 
 	passwordMD5 := utlis.MD5(password)
@@ -91,8 +89,8 @@ func (s *BotService) registerCmd(c tele.Context) error {
 
 	u, err := s.u.CreateUser(username, passwordMD5, telegramID, token)
 	if err != nil {
-		return c.Reply("Register failed\n 注册失败")
+		return c.Reply("Register failed: " + err.Error() + "\n Registration failed")
 	}
 
-	return c.Reply("Register success\n 注册成功\n" + u.Token)
+	return c.Reply("Register success\n Registered successfully: " + u.Token)
 }
