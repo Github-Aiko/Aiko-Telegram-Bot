@@ -15,14 +15,13 @@ func NewBotService(u *data.UserRepo) *BotService {
 }
 
 // StartCmd 启动函数
-// StartCmd start function
 func (s *BotService) startCmd(c tele.Context) error {
 
 	menu := &tele.ReplyMarkup{ResizeKeyboard: true}
 
-	pingBtn := menu.Text("ping")
-	loginBtn := menu.Text("login")
-	registerBtn := menu.Text("register")
+	pingBtn := menu.Text("🏓 Ping")
+	loginBtn := menu.Text("🔑 登录")
+	registerBtn := menu.Text("📝 注册")
 
 	menu.Reply(
 		menu.Row(pingBtn),
@@ -34,20 +33,19 @@ func (s *BotService) startCmd(c tele.Context) error {
 	c.Bot().Handle(&loginBtn, s.loginCmd)
 	c.Bot().Handle(&registerBtn, s.registerCmd)
 
-	return c.Send("Hello!", menu)
+	return c.Send("Hi! How can I help you today?", menu)
 }
 
 // PingCmd ping函数
-// PingCmd ping function
 func (s *BotService) pingCmd(c tele.Context) error {
-	return c.Send("pong!")
+	return c.Reply("🏓 pong!")
 }
 
-// LoginCmd function
+// LoginCmd 函数
 func (s *BotService) loginCmd(c tele.Context) error {
 	args := c.Args()
 	if len(args) != 2 {
-		return c.Reply("Usage: /login username password\n Usage: /login <username> <password>")
+		return c.Reply("用法: /login <用户名> <密码> 🔑\n示例: /login johnsmith password123 🔑")
 	}
 
 	username := args[0]
@@ -56,31 +54,31 @@ func (s *BotService) loginCmd(c tele.Context) error {
 
 	u, err := s.u.Login(username, passwordMD5)
 	if err != nil {
-		return c.Reply("Login failed: " + err.Error() + "\n Login failed")
+		return c.Reply("登录失败: " + err.Error() + " 🔒\n请使用正确的用户名和密码重试 🔑")
 	}
 
-	return c.Reply("Login success\n Logged in successfully: " + u.Token)
+	return c.Reply("登录成功 🎉\n您已成功登录，令牌为: " + u.Token + " ✅")
 }
 
-// RegisterCmd function
+// RegisterCmd 函数
 func (s *BotService) registerCmd(c tele.Context) error {
 	args := c.Args()
 	if len(args) != 2 {
-		return c.Reply("Usage: /reg username password\n 使用方法: /reg 用户名 密码")
+		return c.Reply("用法: /reg <用户名> <密码> 📝\n示例: /reg johnsmith password123 📝")
 	}
 
 	username := args[0]
 
-	// validate that the username is at least 6 characters long
+	// 验证用户名至少为6个字符长
 	if len(username) < 6 {
-		return c.Reply("Username must be greater than 6 characters\n Username must be at least 6 characters long")
+		return c.Reply("用户名至少需要6个字符 🔒\n请使用至少6个字符的新用户名 📝")
 	}
 
 	password := args[1]
 
-	// validate that the password is at least 6 characters long
+	// 验证密码至少为6个字符长
 	if len(password) < 6 {
-		return c.Reply("Password must be greater than 6 characters\n Password must be at least 6 characters long")
+		return c.Reply("密码至少需要6个字符 🔒\n请使用至少6个字符的新密码 🔑")
 	}
 
 	passwordMD5 := utlis.MD5(password)
@@ -89,8 +87,8 @@ func (s *BotService) registerCmd(c tele.Context) error {
 
 	u, err := s.u.CreateUser(username, passwordMD5, telegramID, token)
 	if err != nil {
-		return c.Reply("Register failed: " + err.Error() + "\n Registration failed")
+		return c.Reply("注册失败: " + err.Error() + " 🔒\n请稍后重试 📝")
 	}
 
-	return c.Reply("Register success\n Registered successfully: " + u.Token)
+	return c.Reply("注册成功 🎉\n您已成功注册，令牌为: " + u.Token + " ✅")
 }

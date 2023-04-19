@@ -14,7 +14,7 @@ type Bot struct {
 
 func New(token string) (*Bot, error) {
 	b, err := tele.NewBot(tele.Settings{
-		URL:    "https://proxy-telegram-api.bps.im",
+		// URL:    "https://proxy-telegram-api.bps.im",
 		Token:  token,
 		Poller: &tele.LongPoller{Timeout: 10 * time.Second},
 	})

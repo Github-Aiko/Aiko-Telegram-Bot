@@ -23,7 +23,10 @@ func main() {
 		panic(err)
 	}
 
-	tgbot, err := bot.New(config.GetConfig().GetString("bot.token"))
+	token := config.GetConfig().GetString("bot.token")
+	fmt.Println(token)
+
+	tgbot, err := bot.New(token)
 	if err != nil {
 		panic(err)
 	}
