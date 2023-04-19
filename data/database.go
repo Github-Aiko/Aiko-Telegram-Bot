@@ -1,68 +1,47 @@
 package data
 
 import (
-	"database/sql"
-	"fmt"
-	"io/ioutil"
+	"log"
+	"time"
 
-	"github.com/Github-Aiko/Aiko-Telegram-Bot/config"
-	_ "github.com/go-sql-driver/mysql"
-	"gopkg.in/yaml.v3"
+	"gorm.io/driver/mysql"
+	"gorm.io/gorm"
 )
 
-func New() {
-	// Read the config file
-	data, err := ioutil.ReadFile(config.GetConfig().GetString("apps.database.config"))
+var DB *gorm.DB
+
+func New(dsn string) *gorm.DB {
+
+	// 连接数据库
+	// Connect to the database
+	db, err := gorm.Open(mysql.Open(dsn), &gorm.Config{})
 	if err != nil {
-		panic(err)
+		log.Panicf("数据库连接失败请检查数据库配置文件：%s", err)
 	}
 
-	// Decode the YAML data into a Config struct
-	var config config.Config
-	err = yaml.Unmarshal(data, &config)
-	if err != nil {
-		panic(err)
-	}
+	// 设置数据库链接池
+	// Set database connection pool
+	setDatabaseConnectionPool(db)
 
-	// Create a database connection
-	db, err := sql.Open("mysql", fmt.Sprintf("%s:%s@tcp(%s:%d)/%s",
-		config.Apps.Database.User, config.Apps.Database.Pass,
-		config.Apps.Database.IP, config.Apps.Database.Port,
-		config.Apps.Database.Name))
-	if err != nil {
-		panic(err)
-	}
-	defer db.Close()
+	// 自动迁移
+	// AutoMigrate
+	db.AutoMigrate(&User{})
 
-	// Test the connection
-	err = db.Ping()
-	if err != nil {
-		panic(err)
-	}
+	return db
 
-	// Perform a test query
-	rows, err := db.Query("SELECT * FROM table_name")
-	if err != nil {
-		panic(err)
-	}
-	defer rows.Close()
+}
 
-	// Iterate over the query results
-	for rows.Next() {
-		var column1 string
-		var column2 int
-		err = rows.Scan(&column1, &column2)
-		if err != nil {
-			panic(err)
-		}
-		fmt.Printf("Column 1: %s, Column 2: %d\n", column1, column2)
-	}
-	err = rows.Err()
-	if err != nil {
-		panic(err)
-	}
-
-	// Output a success message
-	fmt.Println("Database connection test successful!")
-
+// 设置数据库链接池
+// Set database connection pool
+func setDatabaseConnectionPool(db *gorm.DB) {
+	sqlDB, _ := db.DB()
+	// 连接池中的最大连接数。
+	// The maximum number of connections in the connection pool.
+	sqlDB.SetMaxIdleConns(10)
+	// 数据库的最大连接数
+	// The maximum number of open connections to the database.
+	sqlDB.SetMaxOpenConns(100)
+	// 设置连接可重用的最大时间
+	// Set the maximum amount of time a connection may be reused.
+	sqlDB.SetConnMaxLifetime(10 * time.Second) //10秒
 }

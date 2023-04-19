@@ -6,6 +6,10 @@ import (
 	tele "gopkg.in/telebot.v3"
 )
 
+type Bot struct {
+	*tele.Bot
+}
+
 func New(token string) (*Bot, error) {
 	b, err := tele.NewBot(tele.Settings{
 		URL:    "https://proxy-telegram-api.bps.im",
@@ -21,7 +25,7 @@ func New(token string) (*Bot, error) {
 	}, nil
 }
 
-func Start(b *Bot) {
+func StartBot(b *Bot) {
 	setHandler(b)
 	b.Start()
 }
