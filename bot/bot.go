@@ -3,7 +3,9 @@ package bot
 import (
 	"time"
 
+	"github.com/Github-Aiko/Aiko-Telegram-Bot/data"
 	tele "gopkg.in/telebot.v3"
+	"gorm.io/gorm"
 )
 
 type Bot struct {
@@ -25,7 +27,11 @@ func New(token string) (*Bot, error) {
 	}, nil
 }
 
-func StartBot(b *Bot) {
-	setHandler(b)
+func StartBot(b *Bot, db *gorm.DB) {
+
+	service := &BotService{u: data.NewUserRepo(db)}
+
+	NewBotHandle(service)
+
 	b.Start()
 }

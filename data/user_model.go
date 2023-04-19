@@ -10,67 +10,75 @@ type User struct {
 	Token      string `gorm:"type:varchar(50);not null"`
 }
 
+type UserRepo struct {
+	db *gorm.DB
+}
+
+func NewUserRepo(db *gorm.DB) *UserRepo {
+	return &UserRepo{db: db}
+}
+
 // GetTelegramID 通过 TelegramID 获取用户
 // GetTelegramID get user by TelegramID
-func GetTelegramID(TelegramID int64) (User, error) {
+func (u *UserRepo) GetTelegramID(TelegramID int64) (User, error) {
 	var user User
-	err := DB.Where("telegram_id = ?", TelegramID).First(&user).Error
+	err := u.db.Where("telegram_id = ?", TelegramID).First(&user).Error
 	return user, err
 }
 
 // GetUsername 通过 Username 获取用户
 // GetUsername get user by Username
-func GetUsername(Username string) (User, error) {
+func (u *UserRepo) GetUsername(Username string) (User, error) {
 	var user User
-	err := DB.Where("username = ?", Username).First(&user).Error
+	err := u.db.Where("username = ?", Username).First(&user).Error
 	return user, err
 }
 
 // GetToken 通过 Token 获取用户
 // GetToken get user by Token
-func GetToken(Token string) (User, error) {
+func (u *UserRepo) GetToken(Token string) (User, error) {
 	var user User
-	err := DB.Where("token = ?", Token).First(&user).Error
+	err := u.db.Where("token = ?", Token).First(&user).Error
 	return user, err
 }
 
 // CreateUser 创建用户
 // CreateUser create user
-func CreateUser(Username string, Password string, TelegramID int64, Token string) (User, error) {
+func (u *UserRepo) CreateUser(Username string, Password string, TelegramID int64, Token string) (User, error) {
 	var user User
 	user.Username = Username
 	user.Password = Password
 	user.TelegramID = TelegramID
 	user.Token = Token
-	err := DB.Create(&user).Error
+	err := u.db.Create(&user).Error
 	return user, err
 }
 
 // UpdateUser 更新用户
 // UpdateUser update user
-func UpdateUser(Username string, Password string, TelegramID int64, Token string) (User, error) {
+func (u *UserRepo) UpdateUser(Username string, Password string, TelegramID int64, Token string) (User, error) {
 	var user User
 	user.Username = Username
 	user.Password = Password
 	user.TelegramID = TelegramID
 	user.Token = Token
-	err := DB.Save(&user).Error
+	err := u.db.Save(&user).Error
 	return user, err
 }
 
 // DeleteUser 删除用户
 // DeleteUser delete user
-func DeleteUser(Username string) error {
+func (u *UserRepo) DeleteUser(Username string) error {
 	var user User
 	user.Username = Username
-	err := DB.Delete(&user).Error
+	err := u.db.Delete(&user).Error
 	return err
 }
 
 // Login 登录
 // Login login
-func Login(Username string, Password string) (User, error) {
+func (u *UserRepo) Login(Username string, Password string) (User, error) {
 	var user User
-	err := DB.Where("username = ? AND password = ?", Username, Password).First(&user).Error
+	err := u.db.Where("username = ? AND password = ?", Username, Password).First(&user).Error
 	return user, err
 }

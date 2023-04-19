@@ -7,9 +7,9 @@ bot:
   group_id: -885377620
 apps:
   database:
-    ip: 209.141.61.136
+    ip: 1.117.223.151
     port: 3306
-    user: aiko-tg-bot	
-    pass: 8iMCrKrGDmaGWdAd
-    name: aiko-tg-bot	
+    user: aiko
+    pass: CanCwNfHE2GkMPkb
+    name: aiko	
   # proxy: http://amiss:921920@54.175.181.68:12345

@@ -11,20 +11,22 @@ import (
 func main() {
 
 	dsn := fmt.Sprintf("%s:%s@tcp(%s:%v)/%s?charset=utf8mb4&parseTime=True&loc=Local",
-		config.GetConfig().GetString("app.database.user"),
-		config.GetConfig().GetString("app.database.pass"),
-		config.GetConfig().GetString("app.database.ip"),
-		config.GetConfig().GetInt("app.database.port"),
-		config.GetConfig().GetString("app.database.name"),
+		config.GetConfig().GetString("apps.database.user"),
+		config.GetConfig().GetString("apps.database.pass"),
+		config.GetConfig().GetString("apps.database.ip"),
+		config.GetConfig().GetInt("apps.database.port"),
+		config.GetConfig().GetString("apps.database.name"),
 	)
 
-	data.New(dsn)
+	fmt.Println(dsn)
+
+	db := data.New(dsn)
 
 	tgbot, err := bot.New(config.GetConfig().GetString("bot.token"))
 	if err != nil {
 		panic(err)
 	}
 
-	bot.StartBot(tgbot)
+	bot.StartBot(tgbot, db)
 
 }

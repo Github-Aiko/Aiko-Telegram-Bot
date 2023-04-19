@@ -6,9 +6,13 @@ import (
 	tele "gopkg.in/telebot.v3"
 )
 
+type BotService struct {
+	u *data.UserRepo
+}
+
 // StartCmd 启动函数
 // StartCmd start function
-func startCmd(c tele.Context) error {
+func (s *BotService) startCmd(c tele.Context) error {
 
 	menu := &tele.ReplyMarkup{ResizeKeyboard: true}
 
@@ -18,20 +22,20 @@ func startCmd(c tele.Context) error {
 		menu.Row(pingBtn),
 	)
 
-	c.Bot().Handle(&pingBtn, pingCmd)
+	c.Bot().Handle(&pingBtn, s.pingCmd)
 
 	return c.Send("Hello!", menu)
 }
 
 // PingCmd ping函数
 // PingCmd ping function
-func pingCmd(c tele.Context) error {
+func (s *BotService) pingCmd(c tele.Context) error {
 	return c.Send("pong!")
 }
 
 // LoginCmd 登录函数
 // LoginCmd login function
-func loginCmd(c tele.Context) error {
+func (s *BotService) loginCmd(c tele.Context) error {
 	args := c.Args()
 	if len(args) != 2 {
 		return c.Reply("Usage: /login username password\n 使用方法: /login 用户名 密码")
@@ -41,7 +45,7 @@ func loginCmd(c tele.Context) error {
 	password := args[1]
 	passwordMD5 := utlis.MD5(password)
 
-	u, err := data.Login(username, passwordMD5)
+	u, err := s.u.Login(username, passwordMD5)
 	if err != nil {
 		return c.Reply("Login failed\n 登录失败")
 	}
@@ -51,7 +55,7 @@ func loginCmd(c tele.Context) error {
 
 // RegisterCmd 注册函数
 // RegisterCmd register function
-func registerCmd(c tele.Context) error {
+func (s *BotService) registerCmd(c tele.Context) error {
 	args := c.Args()
 	if len(args) != 2 {
 		return c.Reply("Usage: /login username password\n 使用方法: /login 用户名 密码")
@@ -75,7 +79,7 @@ func registerCmd(c tele.Context) error {
 	telegramID := c.Sender().ID
 	token := utlis.UUID()
 
-	u, err := data.CreateUser(username, passwordMD5, telegramID, token)
+	u, err := s.u.CreateUser(username, passwordMD5, telegramID, token)
 	if err != nil {
 		return c.Reply("Register failed\n 注册失败")
 	}
