@@ -15,26 +15,35 @@ func New(token string) *Bot {
 	return &Bot{Token: token, Client: client}
 }
 
-func (b *Bot) SendMessage(chatID, text string) error {
-	apiURL := fmt.Sprintf("https://proxy-telegram-api.bps.im/bot%s/sendMessage", b.Token)
+func (b *Bot) request(url string, values url.Values) (data []byte, err error) {
+	if b.Token == "" {
+		return nil, errors.New("token cannot be empty")
+	}
 
-	values := url.Values{}
-	values.Set("chat_id", chatID)
-	values.Set("text", text)
+	apiURL := fmt.Sprintf("https://proxy-telegram-api.bps.im/bot%s%s?", b.Token, url)
 
-	resp, err := b.Client.Get(apiURL + "?" + values.Encode())
+	req, err := http.NewRequest("GET", apiURL+values.Encode(), nil)
 	if err != nil {
-		return err
+		return nil, err
+	}
+
+	fmt.Println(req)
+
+	resp, err := b.Client.Do(req)
+	if err != nil {
+		return nil, err
 	}
 	defer resp.Body.Close()
 
-	if resp.StatusCode != 200 {
-		return errors.New("failed to send message")
+	if resp.StatusCode != http.StatusOK {
+		return nil, fmt.Errorf("request failed with status code %d: %s", resp.StatusCode, resp.Status)
 	}
 
-	body, _ := io.ReadAll(resp.Body)
+	body, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return nil, err
+	}
 
-	fmt.Println(string(body))
+	return body, nil
 
-	return nil
 }
