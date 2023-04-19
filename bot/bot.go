@@ -27,8 +27,6 @@ func (b *Bot) request(url string, values url.Values) (data []byte, err error) {
 		return nil, err
 	}
 
-	fmt.Println(req)
-
 	resp, err := b.Client.Do(req)
 	if err != nil {
 		return nil, err
