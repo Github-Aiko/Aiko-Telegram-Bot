@@ -1,6 +1,7 @@
 package data
 
 import (
+	"fmt"
 	"log"
 	"time"
 
@@ -8,26 +9,24 @@ import (
 	"gorm.io/gorm"
 )
 
-var DB *gorm.DB
+func New(dsn string) (*gorm.DB, error) {
 
-func New(dsn string) *gorm.DB {
-
-	// 连接数据库
 	// Connect to the database
 	db, err := gorm.Open(mysql.Open(dsn), &gorm.Config{})
 	if err != nil {
-		log.Panicf("数据库连接失败请检查数据库配置文件：%s", err)
+		return nil, fmt.Errorf("failed to connect to database: %s", err)
 	}
 
-	// 设置数据库链接池
 	// Set database connection pool
 	setDatabaseConnectionPool(db)
 
-	// 自动迁移
 	// AutoMigrate
-	db.AutoMigrate(&User{})
+	if err := db.AutoMigrate(&User{}); err != nil {
+		return nil, fmt.Errorf("failed to auto migrate database: %s", err)
+	}
 
-	return db
+	log.Printf("successful database connection established with DSN: %s", dsn)
+	return db, nil
 
 }
 

@@ -18,9 +18,10 @@ func main() {
 		config.GetConfig().GetString("apps.database.name"),
 	)
 
-	fmt.Println(dsn)
-
-	db := data.New(dsn)
+	db, err := data.New(dsn)
+	if err != nil {
+		panic(err)
+	}
 
 	tgbot, err := bot.New(config.GetConfig().GetString("bot.token"))
 	if err != nil {

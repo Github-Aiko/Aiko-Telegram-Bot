@@ -17,12 +17,18 @@ func (s *BotService) startCmd(c tele.Context) error {
 	menu := &tele.ReplyMarkup{ResizeKeyboard: true}
 
 	pingBtn := menu.Text("ping")
+	loginBtn := menu.Text("login")
+	registerBtn := menu.Text("register")
 
 	menu.Reply(
 		menu.Row(pingBtn),
+		menu.Row(loginBtn),
+		menu.Row(registerBtn),
 	)
 
 	c.Bot().Handle(&pingBtn, s.pingCmd)
+	c.Bot().Handle(&loginBtn, s.loginCmd)
+	c.Bot().Handle(&registerBtn, s.registerCmd)
 
 	return c.Send("Hello!", menu)
 }

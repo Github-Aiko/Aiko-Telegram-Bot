@@ -8,6 +8,7 @@ type User struct {
 	Password   string `gorm:"type:varchar(50);not null"`
 	TelegramID int64  `gorm:"type:bigint;not null"`
 	Token      string `gorm:"type:varchar(50);not null"`
+	IsAdmin    bool   `gorm:"type:tinyint(1);not null"`
 }
 
 type UserRepo struct {
